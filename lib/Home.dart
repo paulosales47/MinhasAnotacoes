@@ -108,6 +108,81 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _montarListaTarefas(Anotacao anotacao){
+    return Dismissible(
+      child: Card(
+        child: ListTile(
+          title: _formatarTituloAnotacao(anotacao),
+          subtitle: Container(
+            child: Text(anotacao.descricao),
+          ),
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              GestureDetector(
+                onTap: (){
+                  _tituloController.text = anotacao.titulo;
+                  _descricaoController.text = anotacao.descricao;
+
+                  _exibirAltertCadastroEdicao("Editar anotação", [
+                    FlatButton(
+                      onPressed: () => Navigator.pop(context),
+                      child: Text("Cancelar"),
+                    ),
+                    FlatButton(
+                      onPressed: () {
+                        _atualizarAnotacao(anotacao);
+                        Navigator.pop(context);
+                      },
+                      child: Text("Salvar"),
+                    ),
+                  ]);
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(right: 16),
+                  child: Icon(Icons.edit, color: Colors.green,),
+                ),
+              ),
+              GestureDetector(
+                onTap: (){
+                  _removerAnotacao(anotacao);
+                },
+                child: Padding(
+                  padding: EdgeInsets.only(right: 0),
+                  child: Icon(Icons.remove_circle, color: Colors.red,),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      key: UniqueKey(),
+      background: Container(
+        color: Colors.red,
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(left: 16),
+              child: Icon(Icons.delete, color: Colors.white),
+            )
+          ],
+        ),
+      ),
+      direction: DismissDirection.startToEnd,
+      onDismissed: (direcao){
+        showDialog(context){
+          return AlertDialog(
+            title: Text("Confirmar exclusão:"),
+          );
+        }
+        
+        _removerAnotacao(anotacao);
+      },
+    );
+  }
+
   @override
   void initState() {
     super.initState();
@@ -130,55 +205,7 @@ class _HomeState extends State<Home> {
               child: ListView.builder(
                   itemCount: _anotacoes.length,
                   itemBuilder: (context, index){
-                    final Anotacao anotacao = _anotacoes[index];
-
-                    return Card(
-                      child: ListTile(
-                        title: _formatarTituloAnotacao(anotacao),
-                        subtitle: Container(
-                          child: Text(anotacao.descricao),
-                        ),
-                        trailing: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: <Widget>[
-                            GestureDetector(
-                              onTap: (){
-                                _tituloController.text = anotacao.titulo;
-                                _descricaoController.text = anotacao.descricao;
-
-                                _exibirAltertCadastroEdicao("Editar anotação", [
-                                  FlatButton(
-                                    onPressed: () => Navigator.pop(context),
-                                    child: Text("Cancelar"),
-                                  ),
-                                  FlatButton(
-                                    onPressed: () {
-                                      _atualizarAnotacao(anotacao);
-                                      Navigator.pop(context);
-                                    },
-                                    child: Text("Salvar"),
-                                  ),
-                                ]);
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(right: 16),
-                                child: Icon(Icons.edit, color: Colors.green,),
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: (){
-                                _removerAnotacao(anotacao);
-                              },
-                              child: Padding(
-                                padding: EdgeInsets.only(right: 0),
-                                child: Icon(Icons.remove_circle, color: Colors.red,),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    );
-
+                    return _montarListaTarefas(_anotacoes[index]);
                   }),
             )
           ],
