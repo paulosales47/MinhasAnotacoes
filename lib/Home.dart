@@ -47,6 +47,12 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _limparCamposAtualizarLista(){
+    _tituloController.clear();
+    _descricaoController.clear();
+    _recuperarAnotacoes();
+  }
+
   _salvarAnotacao() async{
     var anotacao = Anotacao(
       _tituloController.text,
@@ -58,18 +64,17 @@ class _HomeState extends State<Home> {
     _limparCamposAtualizarLista();
   }
 
-  _limparCamposAtualizarLista(){
-    _tituloController.clear();
-    _descricaoController.clear();
-    _recuperarAnotacoes();
-  }
-
   _atualizarAnotacao(Anotacao anotacao) async{
     anotacao.titulo = _tituloController.text;
     anotacao.descricao = _descricaoController.text;
 
    await _anotacaoHelper.atualizarAnotacao(anotacao);
   _limparCamposAtualizarLista();
+  }
+
+  _removerAnotacao(Anotacao anotacao) async{
+    await _anotacaoHelper.removerAnotacao(anotacao);
+    _limparCamposAtualizarLista();
   }
 
   _recuperarAnotacoes() async{
@@ -87,24 +92,19 @@ class _HomeState extends State<Home> {
 
   String _formatarData(String data){
     initializeDateFormatting('pt_BR');
-    var formatador = DateFormat("d/MM/y - H:m:s");
+    var formatador = DateFormat("d/MM/yy - H:m:ss");
     //var formatador = DateFormat.yMMMMd("pt_BR");
     String dataFormatada = formatador.format(DateTime.parse(data));
     return dataFormatada;
   }
 
-  Widget _formatarTextoAnotacao(Anotacao anotacao){
+  Widget _formatarTituloAnotacao(Anotacao anotacao){
     return Padding(
-      padding: EdgeInsets.only(top: 16),
-      child: Row(
-        children: <Widget>[
-          Text(_formatarData(anotacao.dataCadastro), style: TextStyle(
-              fontWeight: FontWeight.bold
-          ),),
-          Text(" - "),
-          Text(anotacao.descricao)
-        ],
-      ),
+      padding: EdgeInsets.only(bottom: 16),
+      child: Text("${_formatarData(anotacao.dataCadastro)} - ${anotacao.titulo}",
+        style: TextStyle(
+            fontWeight: FontWeight.bold
+        ),),
     );
   }
 
@@ -134,8 +134,10 @@ class _HomeState extends State<Home> {
 
                     return Card(
                       child: ListTile(
-                        title: Text(anotacao.titulo),
-                        subtitle: _formatarTextoAnotacao(anotacao),
+                        title: _formatarTituloAnotacao(anotacao),
+                        subtitle: Container(
+                          child: Text(anotacao.descricao),
+                        ),
                         trailing: Row(
                           mainAxisSize: MainAxisSize.min,
                           children: <Widget>[
@@ -164,7 +166,9 @@ class _HomeState extends State<Home> {
                               ),
                             ),
                             GestureDetector(
-                              onTap: (){},
+                              onTap: (){
+                                _removerAnotacao(anotacao);
+                              },
                               child: Padding(
                                 padding: EdgeInsets.only(right: 0),
                                 child: Icon(Icons.remove_circle, color: Colors.red,),
@@ -185,6 +189,9 @@ class _HomeState extends State<Home> {
         foregroundColor: Colors.white,
         child: Icon(Icons.add),
         onPressed: (){
+          _tituloController.clear();
+          _descricaoController.clear();
+
           _exibirAltertCadastroEdicao("Adicionar anotação", [
             FlatButton(
               onPressed: () => Navigator.pop(context),

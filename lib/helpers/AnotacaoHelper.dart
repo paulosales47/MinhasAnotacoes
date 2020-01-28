@@ -62,12 +62,25 @@ class AnotacaoHelper{
     return qtdRegistrosAtualizados;
   }
 
+  Future<int> removerAnotacao(Anotacao anotacao) async{
+    anotacao.dataAtualizacao = DateTime.now().toString();
+
+    Database db = await database;
+    int qtdRegistrosRemovidos = await db.delete(
+        "TB_ANOTACAO",
+        where: "ID = ?",
+        whereArgs: [anotacao.id]
+    );
+    return qtdRegistrosRemovidos;
+  }
+
   Future<List<Map<String, dynamic>>> listarAnotacoes() async{
     Database bd = await database;
     String sql = "SELECT ID, TITULO, DESCRICAO, DATA_CADASTRO, DATA_ATUALIZACAO FROM TB_ANOTACAO ORDER BY DATA_CADASTRO DESC";
     List anotacoes = await bd.rawQuery(sql);
     return anotacoes;
   }
+
 
 
 
