@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:minhas_anotacoes/helpers/AnotacaoHelper.dart';
+import 'package:minhas_anotacoes/models/Anotacao.dart';
 
 class Home extends StatefulWidget {
   @override
@@ -9,6 +11,7 @@ class _HomeState extends State<Home> {
 
   var _tituloController = TextEditingController();
   var _descricaoController = TextEditingController();
+  var _anotacaoHelper = AnotacaoHelper();
 
 
   _exibirAltertCadastroEdicao(String tituloAltert, List<Widget> botoes){
@@ -41,6 +44,17 @@ class _HomeState extends State<Home> {
     );
   }
 
+  _salvarAnotacao() async{
+    var anotacao = Anotacao(
+      _tituloController.text,
+      _descricaoController.text,
+      DateTime.now().toString()
+    );
+
+    int idAnotacaoSalva = await _anotacaoHelper.salvarAnotacao(anotacao);
+    print(idAnotacaoSalva);
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -60,11 +74,11 @@ class _HomeState extends State<Home> {
               child: Text("Cancelar"),
             ),
             FlatButton(
-              onPressed: () => {
-
-                Navigator.pop(context)
+              onPressed: () {
+                _salvarAnotacao();
+                Navigator.pop(context);
               },
-              child: Text("Adicionar"),
+              child: Text("Salvar"),
             ),
           ]);
         },
