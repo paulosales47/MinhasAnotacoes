@@ -20,6 +20,14 @@ class Anotacao{
 
   }
 
+  Anotacao.fromMap(Map<String, dynamic> mapAnotacao){
+
+      this._id = mapAnotacao["ID"];
+      this._titulo = mapAnotacao["TITULO"];
+      this._descricao = mapAnotacao["DESCRICAO"];
+      this._dataCadastro = mapAnotacao["DATA_CADASTRO"];
+      this._dataAtualizacao = mapAnotacao["DATA_ATUALIZACAO"];
+  }
 
   String get dataAtualizacao => _dataAtualizacao;
 

@@ -49,6 +49,13 @@ class AnotacaoHelper{
       return idAnotacaoInserida;
   }
 
+  Future<List<Map<String, dynamic>>> listarAnotacoes() async{
+    Database bd = await database;
+    String sql = "SELECT ID, TITULO, DESCRICAO, DATA_CADASTRO, DATA_ATUALIZACAO FROM TB_ANOTACAO ORDER BY DATA_CADASTRO DESC";
+    List anotacoes = await bd.rawQuery(sql);
+    return anotacoes;
+  }
+
 
 
 }
