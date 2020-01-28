@@ -38,4 +38,18 @@ class Anotacao{
   String get titulo => _titulo;
 
   int get id => _id;
+
+  set dataAtualizacao(String value) {
+    _dataAtualizacao = value;
+  }
+
+  set descricao(String value) {
+    _descricao = value;
+  }
+
+  set titulo(String value) {
+    _titulo = value;
+  }
+
+
 }

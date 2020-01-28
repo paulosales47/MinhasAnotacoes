@@ -10,7 +10,7 @@ class AnotacaoHelper{
     return _anotacaoHelper;
   }
 
-  AnotacaoHelper._internal(){}
+  AnotacaoHelper._internal();
 
   get database async{
     if(_database != null)
@@ -47,6 +47,19 @@ class AnotacaoHelper{
       Database db = await database;
       int idAnotacaoInserida = await db.insert("TB_ANOTACAO", anotacao.toMap());
       return idAnotacaoInserida;
+  }
+
+  Future<int> atualizarAnotacao(Anotacao anotacao) async{
+    anotacao.dataAtualizacao = DateTime.now().toString();
+
+    Database db = await database;
+    int qtdRegistrosAtualizados = await db.update(
+      "TB_ANOTACAO",
+      anotacao.toMap(),
+      where: "ID = ?",
+      whereArgs: [anotacao.id]
+    );
+    return qtdRegistrosAtualizados;
   }
 
   Future<List<Map<String, dynamic>>> listarAnotacoes() async{

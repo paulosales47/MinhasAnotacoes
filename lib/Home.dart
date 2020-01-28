@@ -55,9 +55,21 @@ class _HomeState extends State<Home> {
     );
 
     await _anotacaoHelper.salvarAnotacao(anotacao);
+    _limparCamposAtualizarLista();
+  }
+
+  _limparCamposAtualizarLista(){
     _tituloController.clear();
     _descricaoController.clear();
     _recuperarAnotacoes();
+  }
+
+  _atualizarAnotacao(Anotacao anotacao) async{
+    anotacao.titulo = _tituloController.text;
+    anotacao.descricao = _descricaoController.text;
+
+   await _anotacaoHelper.atualizarAnotacao(anotacao);
+  _limparCamposAtualizarLista();
   }
 
   _recuperarAnotacoes() async{
@@ -111,7 +123,7 @@ class _HomeState extends State<Home> {
         backgroundColor: Colors.lightGreen,
       ),
       body: Container(
-        padding: EdgeInsets.all(16),
+        padding: EdgeInsets.only(top: 16, right: 8, left: 8, bottom: 8 ),
         child: Column(
           children: <Widget>[
             Expanded(
@@ -124,6 +136,42 @@ class _HomeState extends State<Home> {
                       child: ListTile(
                         title: Text(anotacao.titulo),
                         subtitle: _formatarTextoAnotacao(anotacao),
+                        trailing: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: <Widget>[
+                            GestureDetector(
+                              onTap: (){
+                                _tituloController.text = anotacao.titulo;
+                                _descricaoController.text = anotacao.descricao;
+
+                                _exibirAltertCadastroEdicao("Editar anotação", [
+                                  FlatButton(
+                                    onPressed: () => Navigator.pop(context),
+                                    child: Text("Cancelar"),
+                                  ),
+                                  FlatButton(
+                                    onPressed: () {
+                                      _atualizarAnotacao(anotacao);
+                                      Navigator.pop(context);
+                                    },
+                                    child: Text("Salvar"),
+                                  ),
+                                ]);
+                              },
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 16),
+                                child: Icon(Icons.edit, color: Colors.green,),
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: (){},
+                              child: Padding(
+                                padding: EdgeInsets.only(right: 0),
+                                child: Icon(Icons.remove_circle, color: Colors.red,),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     );
 
