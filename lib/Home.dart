@@ -17,7 +17,7 @@ class _HomeState extends State<Home> {
   List<Anotacao> _anotacoes = [];
 
 
-  _exibirAltertCadastroEdicao(String tituloAltert, List<Widget> botoes){
+  AlertDialog _exibirAltertCadastroEdicao(String tituloAltert, List<Widget> botoes){
     showDialog(
       context: context,
       builder: (context){
@@ -44,6 +44,33 @@ class _HomeState extends State<Home> {
           actions: botoes
         );
       }
+    );
+  }
+
+  AlertDialog _exibirAllertExclusao(Anotacao anotacao) {
+    showDialog(
+        context: context,
+        builder: (context){
+          return AlertDialog(
+            title: Text("Confirmação de remoção"),
+            actions: <Widget>[
+              FlatButton(
+                child: Text("Cancelar"),
+                onPressed: () async{
+                  await _limparCamposAtualizarLista();
+                  Navigator.pop(context);
+                },
+              ),
+              FlatButton(
+                child: Text("Confirmar"),
+                onPressed: () async {
+                  await _removerAnotacao(anotacao);
+                  Navigator.pop(context);
+                },
+              )
+            ],
+          );
+        }
     );
   }
 
@@ -145,7 +172,7 @@ class _HomeState extends State<Home> {
               ),
               GestureDetector(
                 onTap: (){
-                  _removerAnotacao(anotacao);
+                  _exibirAllertExclusao(anotacao);
                 },
                 child: Padding(
                   padding: EdgeInsets.only(right: 0),
@@ -172,13 +199,7 @@ class _HomeState extends State<Home> {
       ),
       direction: DismissDirection.startToEnd,
       onDismissed: (direcao){
-        showDialog(context){
-          return AlertDialog(
-            title: Text("Confirmar exclusão:"),
-          );
-        }
-        
-        _removerAnotacao(anotacao);
+        _exibirAllertExclusao(anotacao);
       },
     );
   }
@@ -188,7 +209,6 @@ class _HomeState extends State<Home> {
     super.initState();
     _recuperarAnotacoes();
   }
-
 
   @override
   Widget build(BuildContext context) {
